@@ -1,4 +1,6 @@
 import requests
+from bs4 import BeautifulSoup
+import re
 
 ALL_TEAMS = ("ATL", "BOS", "NJN", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", 
 "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NOH", "NYK", "OKC", 
@@ -25,7 +27,14 @@ def Scraper(x: tuple[tuple]) -> int:
     """Scrape statistics from the desired teams and year dates"""
     teams = x[0]
     for team in teams:
-        with open(f"{team}.csv", "w") as file:
-            r = requests.get(f"https://www.basketball-reference.com/teams/{team}/")
-            file.write(r.text)
-    return 0
+        with open(f"{team}.txt", "w") as file:
+            request = requests.get(f"https://www.basketball-reference.com/teams/{team}/")
+            soup = Table_rows(BeautifulSoup(request.text, 'html.parser'))
+            for row in soup[1:]:
+                file.write(str(row) + "\n")
+
+def Table_rows(soup: str) -> list:
+    """Takes HTML5 and returns table rows"""
+    return soup.find("table").find_all("tr")
+
+Scraper(User_input())

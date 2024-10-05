@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import re
+import json
 
 ALL_TEAMS = ("ATL", "BOS", "NJN", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", 
 "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NOH", "NYK", "OKC", 
@@ -23,18 +23,30 @@ def User_input() -> tuple[tuple, tuple]:
     team = tuple(team)
     return team, year
 
-def Scraper(x: tuple[tuple]) -> int:
+def Scraper(x: tuple[tuple]) -> dict:
     """Scrape statistics from the desired teams and year dates"""
     teams = x[0]
+    data = dict()
     for team in teams:
-        with open(f"{team}.txt", "w") as file:
-            request = requests.get(f"https://www.basketball-reference.com/teams/{team}/")
-            soup = Table_rows(BeautifulSoup(request.text, 'html.parser'))
-            for row in soup[1:]:
-                file.write(str(row) + "\n")
+        data[team] = dict()
+        request = requests.get(f"https://www.basketball-reference.com/teams/{team}/")
+        soup = Table_rows(BeautifulSoup(request.text, 'html.parser'))
+        for row in soup[1:]:
+            data[team][Season_year(row)] = dict()
+            for cell in Table_cells(row):
+                name = cell["data-stat"]
+                if name not in {"DUMMY", "lg_id", "coaches", "top_ws", "rank_team_playoffs"}:
+                    data[team][Season_year(row)][name] = cell.text
+    return data
 
 def Table_rows(soup: str) -> list:
     """Takes HTML5 and returns table rows"""
     return soup.find("table").find_all("tr")
 
-Scraper(User_input())
+def Table_cells(row):
+    """Returns all tables cell from given row"""
+    return row.find_all("td")
+
+def Season_year(row):
+    """Returns the year of the season"""
+    return row.find_all("th")[0].text

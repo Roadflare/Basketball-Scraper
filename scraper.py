@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+import matplotlib.pyplot as plt
+import json
 
 ALL_TEAMS = ("ATL", "BOS", "NJN", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", 
 "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NOH", "NYK", "OKC", 
@@ -27,7 +29,7 @@ def Scraper(teams: tuple) -> dict:
     """Scrape statistics from the desired teams and year dates"""
     data = dict()
     for team in teams:
-        time.sleep(30)
+        time.sleep(5)
         data[team] = dict()
         request = requests.get(f"https://www.basketball-reference.com/teams/{team}/")
         soup = Table_rows(BeautifulSoup(request.text, 'html.parser'))
@@ -37,6 +39,8 @@ def Scraper(teams: tuple) -> dict:
                 name = cell["data-stat"]
                 if name not in {"DUMMY", "lg_id", "coaches", "top_ws", "rank_team_playoffs", "team_name"}:
                     data[team][Season_year(row)][name] = cell.text
+    with open("data.json", "w") as file:
+        json.dump(data, file)
     return data
 
 def Table_rows(soup: str) -> list:
@@ -51,7 +55,7 @@ def Season_year(row):
     """Returns the year of the season"""
     return row.find_all("th")[0].text
 
-def Sort_by_stats(teams: dict[str, dict[str, dict[str, int]]], stats: str) -> list[tuple[int, str, str]]:
+def Sort_teams(teams: dict[str, dict[str, dict[str, int]]], stats: str) -> list[tuple[int, str, str]]:
     """Returns list of sorted statistic type"""
     scores: list[tuple[int, str, str]] = []
     for team, team_val in teams.items():

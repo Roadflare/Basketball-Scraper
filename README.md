@@ -1,13 +1,8 @@
 # Basketball-Scraper
-Basketball season statistics scraper
+Basketball scraper will scrape from this [site](https://www.basketball-reference.com/). You will get previous and current season of all 30 NBA teams.
 
-You need Python3 and some extra modules.
+## Installation
+Recommended to use a python virtual environment.
+### For Linux
+To create one use `python -m venv venv` and to activate `source venv/bin/activate`. To get required pip packages run `pip install -r requirements.txt`.
 
-For python3 use your package manager to install it.
-Example: \
-`sudo pacman -S python3` \
-`sudo dnf install python3` \
-`sudo apt install python3` 
-
-For the packages run: \
-`pip install matplotlib json requests bs4`

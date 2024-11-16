@@ -88,9 +88,9 @@ def Count_occurence(data: list[tuple]) -> dict:
             count[wins] = 1
     return count
 
-def PlotGraphDraw() -> int:
+def PlotGraphDraw(y) -> int:
     count = list()
-    for x in Sort_teams(data, "wins"):
+    for x in y:
         count.append(x[0])
 
     plt.hist(count, bins=range(75), color="dodgerblue")

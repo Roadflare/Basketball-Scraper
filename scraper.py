@@ -71,7 +71,6 @@ def Float_Zero(value):
         return 0.0
 
 def Sort_by_dominance(teams: dict[str, dict[str, dict[str, int]]]) -> list[tuple[int, str, str]]:
-    """Sorts teams by my terms of dominance"""
     scores: list[tuple[int, str, str]] = []
     for team, team_val in teams.items():
         for year, year_val in team_val.items():
@@ -88,3 +87,16 @@ def Count_occurence(data: list[tuple]) -> dict:
         else:
             count[wins] = 1
     return count
+
+def PlotGraphDraw() -> int:
+    count = list()
+    for x in Sort_teams(data, "wins"):
+        count.append(x[0])
+
+    plt.hist(count, bins=range(75), color="dodgerblue")
+    plt.title("Pogostost zmag")
+    plt.xlabel("Število zmag v eni sezoni")
+    plt.ylabel("Število pojavitev")
+    plt.ylim(0, 65)
+    plt.axhline(30, color="k", linestyle="dotted", linewidth=1)
+    return 0
